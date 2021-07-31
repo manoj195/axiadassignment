@@ -18,8 +18,8 @@ Resources:
     Properties:
       DBName: axioddb
       Engine: MySQL
-      MultiAZ: MultiAZDatabase
+      MultiAZ: True
+      AllocatedStorage: '5'
+      DBInstanceClass: db.t2.small 
       MasterUsername: DBUser
       MasterUserPassword: DBPassword
-      VPCSecurityGroups: axiodsg
-       

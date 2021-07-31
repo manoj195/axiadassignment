@@ -17,19 +17,10 @@ privsubnet  = ec2.create_subnet(CidrBlock='172.16.2.0/24', VpcId=vpc.id)
 #privroutetable = vpc.create_route_table()
 
 # Create a security group and allow SSH inbound rule through the VPC
-securitygroup = ec2.create_security_group(GroupName='axiodsg', Description='only allow SSH traffic', VpcId=vpc.id)
-securitygroup.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=22, ToPort=22)
-securitygroup.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=80, ToPort=80)
+pubsecuritygroup = ec2.create_security_group(GroupName='axiodsg', Description='Webserver and SSH traffic', VpcId=vpc.id)
+pubsecuritygroup.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=22, ToPort=22)
+pubsecuritygroup.authorize_ingress(CidrIp='0.0.0.0/0', IpProtocol='tcp', FromPort=80, ToPort=80)
 dbsecuritygroup = ec2.create_security_group(GroupName='dbsecuritygroup', Description='DB security group', VpcId=vpc.id)
-dbsecuritygroup.authorize_security_group_ingress( 
-    GroupName=axiodsg, 
-    IpPermissions=[
-        {'IpProtocol': 'tcp', 
-        'FromPort': 3306, 
-        'ToPort': 3306, 
-        'UserIdGroupPairs': [{ 'GroupName': dbsecuritygroup }] }
-    ],
-)
 
 # create a file to store the key locally
 
@@ -44,8 +35,9 @@ outfile.write(KeyPairOut)
 
 
 asgclient = boto3.client('autoscaling')
-
-response = asgclient.create_launch_configuration(
+elbclient = boto3.client('elbv2')
+cfclient = boto3.client('cloudformation')
+lcresponse = asgclient.create_launch_configuration(
     LaunchConfigurationName='axiodlc',
     ImageId='ami-08bc0dd666f8de033',
     KeyName='ec2-keypair',
@@ -54,7 +46,9 @@ response = asgclient.create_launch_configuration(
         'Enabled': True
     }
 )
+##CloudFormation code for create DB and Auto scaling group template
+cf_template = open('autoscaledb.yaml').read()
+cfclient.create_stack(StackName='asg-dbstack', TemplateBody=cf_template)
 
-
-
+### Creating Load Balancer
 
