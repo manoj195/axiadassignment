@@ -1,4 +1,4 @@
-# axiodassignment
+# axiadassignment
 
 This is the Python code using boto3 module for provisioning resources on AWS
 
