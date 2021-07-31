@@ -1,0 +1,25 @@
+Resources:
+  Autoscalinggroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: axiodasg
+      AvailabilityZones:
+        - us-east-2a
+      DesiredCapacity: 3
+      HealthCheckGracePeriod: 60
+      LaunchConfigurationName: axiodlc
+      MaxSize: 10
+      MinSize: 3
+      NewInstancesProtectedFromScaleIn: False
+  
+                  
+  DBInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBName: axioddb
+      Engine: MySQL
+      MultiAZ: MultiAZDatabase
+      MasterUsername: DBUser
+      MasterUserPassword: DBPassword
+      VPCSecurityGroups: axiodsg
+       
