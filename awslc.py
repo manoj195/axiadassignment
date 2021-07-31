@@ -51,4 +51,5 @@ cf_template = open('autoscaledb.yaml').read()
 cfclient.create_stack(StackName='asg-dbstack', TemplateBody=cf_template)
 
 ### Creating Load Balancer
-
+cf_template_elb = open('vpc-elb-asg.yaml').read()
+cfclient.create_stack(StackName='vpc-elb-assigment', TemplateBody=cf_template_elb)

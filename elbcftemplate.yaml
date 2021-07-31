@@ -1,0 +1,8 @@
+Resources:
+  ElasticLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties: 
+      IpAddressType: ipv4
+      Name: axiadelb-asg-frontend
+      Scheme: internet-facing
+      Type: application
